@@ -120,11 +120,7 @@ function dispatch(action: Action) {
   });
 }
 
-interface Toast extends Omit<ToasterToast, "id"> {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  action?: ToastActionElement;
-}
+type Toast = Omit<ToasterToast, "id">;
 
 function toast({ ...props }: Toast) {
   const id = generateId();
