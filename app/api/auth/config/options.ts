@@ -30,4 +30,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
+  // Sử dụng biến môi trường cho secret hoặc dùng một giá trị mặc định cho môi trường phát triển
+  secret: process.env.NEXTAUTH_SECRET || "YOUR_DEVELOPMENT_SECRET_DO_NOT_USE_IN_PRODUCTION",
 };
