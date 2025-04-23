@@ -7,7 +7,7 @@ import { Navigation } from "./components/auth/navigation";
 import { DocumentUpload } from "./components/rag/document-upload";
 import { QueryInterface } from "./components/rag/query-interface";
 import { ChatInterface } from "./components/chatbot/chat-interface";
-import { BookOpen, MessageSquare, Database, Search, Upload, Bot, ArrowDown } from "lucide-react";
+import { Database, ArrowDown } from "lucide-react";
 
 export default function Home() {
   const { status } = useSession();

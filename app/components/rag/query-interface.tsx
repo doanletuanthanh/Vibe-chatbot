@@ -7,7 +7,7 @@ import axios from "axios";
 
 interface Source {
   content: string;
-  metadata: any;
+  metadata: Record<string, string>;
   score: number;
 }
 

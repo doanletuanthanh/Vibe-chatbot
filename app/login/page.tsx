@@ -37,7 +37,7 @@ export default function LoginPage() {
         router.push("/");
         router.refresh();
       }
-    } catch (error) {
+    } catch (err) {
       toast({
         title: "Error",
         description: "An unexpected error occurred",

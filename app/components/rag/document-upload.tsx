@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Plus } from "lucide-react";
+import { Upload, FileText } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
 import axios from "axios";
 

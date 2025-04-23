@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Send, MessageSquare, Bot, User, Database, Settings, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Send, MessageSquare, Bot, User, Settings, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
 import axios from "axios";
 
@@ -51,29 +51,7 @@ export function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Fetch conversations on component mount
-  useEffect(() => {
-    fetchConversations();
-    fetchAvailableModels();
-  }, []);
-
-  // Scroll to bottom of messages
-  useEffect(() => {
-    scrollToBottom();
-  }, [currentConversation]);
-
-  // Add this useEffect to fetch collections when RAG is enabled
-  useEffect(() => {
-    if (useRag && collections.length === 0) {
-      fetchCollections();
-    }
-  }, [useRag]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const response = await axios.get<ConversationListResponse>(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations`
@@ -87,9 +65,9 @@ export function ChatInterface() {
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
 
-  const fetchAvailableModels = async () => {
+  const fetchAvailableModels = useCallback(async () => {
     setIsLoadingModels(true);
     try {
       const response = await axios.get<AvailableModelsResponse>(
@@ -115,9 +93,9 @@ export function ChatInterface() {
     } finally {
       setIsLoadingModels(false);
     }
-  };
+  }, [toast]);
 
-  const fetchCollections = async () => {
+  const fetchCollections = useCallback(async () => {
     setIsLoadingCollections(true);
     try {
       const response = await axios.get(
@@ -136,6 +114,28 @@ export function ChatInterface() {
     } finally {
       setIsLoadingCollections(false);
     }
+  }, [toast]);
+
+  // Fetch conversations on component mount
+  useEffect(() => {
+    fetchConversations();
+    fetchAvailableModels();
+  }, [fetchConversations, fetchAvailableModels]);
+
+  // Scroll to bottom of messages
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentConversation]);
+
+  // Add this useEffect to fetch collections when RAG is enabled
+  useEffect(() => {
+    if (useRag && collections.length === 0) {
+      fetchCollections();
+    }
+  }, [useRag, collections.length, fetchCollections]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const fetchConversation = async (id: string) => {
