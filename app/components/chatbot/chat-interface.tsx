@@ -5,6 +5,13 @@ import { Send, MessageSquare, Bot, User, Settings, ChevronDown, ChevronUp } from
 import { useToast } from "@/lib/hooks/use-toast";
 import axios from "axios";
 
+// Tạo instance axios với headers mặc định để bỏ qua ngrok warning
+const apiClient = axios.create({
+  headers: {
+    'ngrok-skip-browser-warning': 'true'
+  }
+});
+
 interface Message {
   id: string;
   role: string;
@@ -53,7 +60,7 @@ export function ChatInterface() {
 
   const fetchConversations = useCallback(async () => {
     try {
-      const response = await axios.get<ConversationListResponse>(
+      const response = await apiClient.get<ConversationListResponse>(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations`
       );
       setConversations(response.data.conversations);
@@ -70,7 +77,7 @@ export function ChatInterface() {
   const fetchAvailableModels = useCallback(async () => {
     setIsLoadingModels(true);
     try {
-      const response = await axios.get<AvailableModelsResponse>(
+      const response = await apiClient.get<AvailableModelsResponse>(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/available-models`
       );
       setAvailableModels(response.data.models);
@@ -98,7 +105,7 @@ export function ChatInterface() {
   const fetchCollections = useCallback(async () => {
     setIsLoadingCollections(true);
     try {
-      const response = await axios.get(
+      const response = await apiClient.get(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/rag/collections`
       );
       if (response.data.collections && Array.isArray(response.data.collections)) {
@@ -140,7 +147,7 @@ export function ChatInterface() {
 
   const fetchConversation = async (id: string) => {
     try {
-      const response = await axios.get<Conversation>(
+      const response = await apiClient.get<Conversation>(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations/${id}`
       );
       setCurrentConversation(response.data);
@@ -167,7 +174,7 @@ export function ChatInterface() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
+      const response = await apiClient.post(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/chat`,
         {
           message: message.trim(),
@@ -213,7 +220,7 @@ export function ChatInterface() {
   const deleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering conversation selection
     try {
-      await axios.delete(
+      await apiClient.delete(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations/${id}`
       );
       
